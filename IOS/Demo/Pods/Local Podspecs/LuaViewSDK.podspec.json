@@ -19,6 +19,7 @@
     "tag": "v0.5.2"
   },
   "source_files": "IOS/SDK/LuaViewSDK/Classes/**/*.{h,m,c}",
+  "public_header_files": "LuaViewSDK/Classes/**/*.h",
   "frameworks": [
     "Foundation",
     "UIKit",

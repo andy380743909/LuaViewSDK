@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   s.source_files  = "IOS/SDK/LuaViewSDK/Classes/**/*.{h,m,c}"
   # s.exclude_files = "Classes/Exclude"
 
-  #s.public_header_files = "LuaViewSDK/Classes/**/*.h"
+  s.public_header_files = "LuaViewSDK/Classes/**/*.h"
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
