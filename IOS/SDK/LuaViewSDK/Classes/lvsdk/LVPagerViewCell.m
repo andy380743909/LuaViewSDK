@@ -8,7 +8,9 @@
 
 #import "LVPagerViewCell.h"
 #import "LuaViewCore.h"
-#import "lapi.h"
+
+// Why import lapi.h here ? LVHeads.h not enough ???
+//#import "lapi.h"
 
 @interface LVPagerViewCell ()
 @property (nonatomic,weak) LuaViewCore* lv_luaviewCore;

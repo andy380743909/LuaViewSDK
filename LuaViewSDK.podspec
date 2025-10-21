@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "7.0"
+  s.platform     = :ios, "9.0"
 
   s.source       = { :git => "https://github.com/alibaba/LuaViewSDK.git", :tag => "v0.5.2" }
 
@@ -65,6 +65,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.dependency 'liblua'
+  # s.dependency 'liblua'
+  s.vendored_frameworks = 'iOS/lua_ios.xcframework'
 
 end

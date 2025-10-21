@@ -85,7 +85,7 @@ static int db_set (lua_State *L) {
         {LUAVIEW_SYS_TABLE_KEY, db_set},
         {NULL,   NULL}
     };
-    luaL_openlib(L, "DB", functions, 0);
+    LV_LUA_OPENLIB(L, "DB", functions, 0);
     return 0;
 }
 

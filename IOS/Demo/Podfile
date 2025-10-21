@@ -4,11 +4,17 @@ platform :ios, "15.0"
 
 target 'Demo' do
 
+  use_frameworks!
+  
     pod 'MJRefresh'
     pod 'SDWebImage'
 
     pod 'LuaViewSDK', :path => '../../'
-    pod 'liblua',  :path => '../../'
+    
+    # test if LuaViewSDK compatible with lua 5.4.4
+    # so disable liblua and import lua_ios.xcframework
+#    pod 'liblua',  :path => '../../'
+    
     
 end
 

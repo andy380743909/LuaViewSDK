@@ -107,14 +107,14 @@ static int direction (lua_State *L) {
     [LVUtil reg:L clas:self cfunc:lvSwipeGestureRecognizer globalName:globalName defaultName:@"SwipeGesture"];
     
     lv_createClassMetaTable(L ,META_TABLE_SwipeGesture);
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
     {
         const struct luaL_Reg memberFunctions [] = {
             {"touchCount", touchCount},
             {"direction", direction},
             {NULL, NULL}
         };
-        luaL_openlib(L, NULL, memberFunctions, 0);
+        LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     }
     return 1;
 }

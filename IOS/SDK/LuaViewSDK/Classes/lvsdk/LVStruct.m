@@ -202,7 +202,7 @@ static int __newindex (lua_State *L) {
     
     lv_createClassMetaTable(L ,META_TABLE_Struct);
     
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     
 //    {
 //        const struct luaL_Reg memberFunctions2 [] = {

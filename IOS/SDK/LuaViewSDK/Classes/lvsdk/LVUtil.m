@@ -106,15 +106,51 @@ NSString* lv_runFunctionWithArgs(lua_State* l, int nargs, int nret){
 }
 
 #define api_incr_top(L)   {api_check(L, L->top < L->ci->top); L->top++;}
-void lv_pushUserdata(lua_State* L, void* p){///是否正确 ????????
-    if( p ) {
-        Udata* u = (Udata*)p;
-        u -= 1;
-        lua_lock(L);
-        luaC_checkGC(L);
-        setuvalue(L, L->top, u);
-        api_incr_top(L);
-        lua_unlock(L);
+//void lv_pushUserdata(lua_State* L, void* p){///是否正确 ????????
+//    if( p ) {
+//        Udata* u = (Udata*)p;
+//        u -= 1;
+//        lua_lock(L);
+//        luaC_checkGC(L);
+//        setuvalue(L, L->top, u);
+//        api_incr_top(L);
+//        lua_unlock(L);
+//    } else {
+//        lua_pushnil(L);
+//    }
+//}
+
+/*
+ * Push userData to Lua stack
+ *
+ * L    - Lua state
+ * p    - pointer to C object (can be NULL)
+ * size - size of the data to store (optional, 0 if just storing pointer)
+ */
+void lv_pushUserdata(lua_State* L, void* p)
+//void lv_pushUserdata(lua_State* L, void* p, size_t size)
+{
+    size_t size = 0;
+    if (p) {
+        // Allocate Lua userdata
+        void* udata = lua_newuserdata(L, size > 0 ? size : sizeof(void*));
+        
+        if (size > 0) {
+            // Copy the contents if size > 0
+            memcpy(udata, p, size);
+        } else {
+            // Just store the pointer
+            *((void**)udata) = p;
+        }
+
+        // Optionally, set a metatable for this userdata
+        luaL_getmetatable(L, "LVUserdataMeta");
+        if (!lua_isnil(L, -1)) {
+            lua_setmetatable(L, -2);
+        } else {
+            lua_pop(L, 1); // pop nil
+        }
+
     } else {
         lua_pushnil(L);
     }
@@ -227,7 +263,11 @@ NSArray* lv_luaTableKeys(lua_State* L, int index){
 NSArray* lv_luaTableToArray(lua_State* L,int stackID)
 {
     if( lua_type(L, stackID)==LUA_TTABLE) {
+#if LUA_VERSION_NUM < 502
         int count = luaL_getn(L, stackID);
+#else
+        int count = (int)lua_rawlen(L, stackID);
+#endif
         NSMutableArray* array = [[NSMutableArray alloc] init];
         
         for (int i = 0; i < count; i++)
@@ -732,7 +772,7 @@ void lv_udataUnref(lua_State* L, int key) {
 
 static int lv_setUDataLuatable (lua_State *L, int index) {
     if( lua_type(L, index)==LUA_TUSERDATA ){
-        lua_setfenv(L, index);
+        LV_LUA_SETUSERVALUE(L, index);
         return 1;
     }
     return 0;
@@ -740,7 +780,7 @@ static int lv_setUDataLuatable (lua_State *L, int index) {
 
 int lv_getUDataLuatable (lua_State *L, int index) {
     if( lua_type(L, index)==LUA_TUSERDATA ){
-        lua_getfenv(L, index);
+        LV_LUA_GETUSERVALUE(L, index);
         return 1;
     }
     return 0;

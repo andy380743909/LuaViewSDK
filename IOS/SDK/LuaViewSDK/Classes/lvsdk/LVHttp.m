@@ -314,7 +314,7 @@ static int cancel (lua_State *L) {
         
         lv_createClassMetaTable(L, META_TABLE_Http);
         
-        luaL_openlib(L, NULL, memberFunctions, 0);
+        LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     }
     [LVUtil reg:L clas:self cfunc:lvNewHttpObject globalName:globalName defaultName:@"Http"];
     return 1;

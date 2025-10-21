@@ -72,14 +72,14 @@ static int rotation (lua_State *L) {
     
     lv_createClassMetaTable(L ,META_TABLE_RotaionGesture);
     
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
     
     {
         const struct luaL_Reg memberFunctions [] = {
             {"rotation", rotation},
             {NULL, NULL}
         };
-        luaL_openlib(L, NULL, memberFunctions, 0);
+        LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     }
     return 1;
 }

@@ -12,18 +12,35 @@
 
 #import <Foundation/Foundation.h>
 
+#ifndef LUA_VERSION_NUM
+#define LUA_VERSION_NUM 504
+#endif
 //#import "lua.h"
 //#import "lauxlib.h"
 //#import "lualib.h"
 //#import "lstate.h"
 //#import "lgc.h"
 //#import "lapi.h"
+
+#if LUA_VERSION_NUM < 502
+
 #import <liblua/lua.h>
 #import <liblua/lauxlib.h>
 #import <liblua/lualib.h>
 #import <liblua/lstate.h>
-#import <liblua/lgc.h>
-#import <liblua/lapi.h>
+//#import <liblua/lgc.h>
+//#import <liblua/lapi.h>
+
+#else
+
+#import <lua_ios/lua.h>
+#import <lua_ios/lauxlib.h>
+#import <lua_ios/lualib.h>
+//#import <lua_ios/lstate.h>
+//#import <lua_ios/lgc.h>
+//#import <lua_ios/lapi.h>
+
+#endif
 
 //@import liblua;
 
@@ -238,7 +255,62 @@ typedef void(^LVLoadFinished)(id errorInfo);
 #define EFFECT_CLICK    1
 #define EFFECT_PARALLAX 2
 
+
+#if LUA_VERSION_NUM < 502
+// Lua 5.1 and older (legacy)
 #define LV_LUASTATE_VIEW(L)     ( (__bridge LuaViewCore *)( G(L)->ud ) )
+
+#else
+// upgrade to 5.4.4, replace the old LV_LUASTATE_VIEW
+// #define LV_LUASTATE_VIEW(L) ( (__bridge LuaViewCore *)( G(L)->ud ) )
+
+#define LV_LUASTATE_VIEW(L) ((__bridge LuaViewCore *)(*(void **)lua_getextraspace(L)))
+
+#endif
+
+#if LUA_VERSION_NUM < 502
+    // Lua 5.1
+    #define luaC_checkGC(L) lua_gc(L, LUA_GCSTEP, 0)
+#else
+    // Lua 5.2+
+    #define luaC_checkGC(L) lua_gc(L, LUA_GCSTEP, 0)
+#endif
+
+#if LUA_VERSION_NUM < 502
+    #define LV_LUA_OPENLIB(L, libname, l, n) luaL_openlib(L, libname, l, n)
+#else
+    #define LV_LUA_OPENLIB(L, libname, l, n) \
+        do { \
+            lua_newtable(L); \
+            (void)(libname); /* ignore name, luaL_setfuncs does not need it */ \
+            luaL_setfuncs(L, l, n); \
+            if (libname) { \
+                lua_setglobal(L, libname); \
+            } else { \
+                lua_pop(L, 1); /* remove table if no global name */ \
+            } \
+        } while(0)
+#endif
+
+#if LUA_VERSION_NUM < 502
+    #define LV_LUA_GETUSERVALUE(L, idx) lua_getfenv(L, idx)
+    #define LV_LUA_SETUSERVALUE(L, idx) lua_setfenv(L, idx)
+#else
+    #define LV_LUA_GETUSERVALUE(L, idx) lua_getuservalue(L, idx)
+    #define LV_LUA_SETUSERVALUE(L, idx) lua_setuservalue(L, idx)
+#endif
+
+#if LUA_VERSION_NUM < 502
+    #define LV_LUA_REGISTER(L, n, f) luaL_register(L, n, f)
+#else
+    #define LV_LUA_REGISTER(L, n, f) \
+        do { \
+            lua_newtable(L); \
+            luaL_setfuncs(L, f, 0); \
+            lua_setglobal(L, n); \
+        } while(0)
+#endif
+
 #define LUAVIEW_SYS_TABLE_KEY   "..::luaview::.."
 
 #ifndef MakeSureNotNil

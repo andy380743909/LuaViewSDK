@@ -1,3 +1,6 @@
+print(System)        -- should not be nil
+print(type(System))  -- should be 'table'
+
 scrW,scrH = System:screenSize();
 label = Label();
 label:frame(0,0,scrW,scrH-64);

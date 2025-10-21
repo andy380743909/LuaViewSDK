@@ -165,7 +165,7 @@ static int tableToString(lua_State*L){
             {"layerMode", layerMode},// (for IOS) 是否开启layer模式
             {NULL, NULL}
         };
-        luaL_openlib(L, "System", staticFunctions, 0);
+        LV_LUA_OPENLIB(L, "System", staticFunctions, 0);
     }
     {
         // Json Table相互转换
@@ -175,7 +175,7 @@ static int tableToString(lua_State*L){
             {"toTable",stringToTable},
             {NULL, NULL}
         };
-        luaL_openlib(L, "Json", fs, 0);
+        LV_LUA_OPENLIB(L, "Json", fs, 0);
     }
     // ----  常量注册 ----
     {

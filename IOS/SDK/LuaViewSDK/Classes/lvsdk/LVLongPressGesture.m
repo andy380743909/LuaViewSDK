@@ -81,14 +81,14 @@ static int setTouchCount (lua_State *L) {
     
     lv_createClassMetaTable(L, META_TABLE_LongPressGesture);
     
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
     
     {
         const struct luaL_Reg memberFunctions [] = {
             {"touchCount",     setTouchCount},
             {NULL, NULL}
         };
-        luaL_openlib(L, NULL, memberFunctions, 0);
+        LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     }
     return 1;
 }

@@ -633,9 +633,9 @@ static int initParams (lua_State *L) {
     
     lv_createClassMetaTable(L ,META_TABLE_UIPageView);
     
-    luaL_openlib(L, NULL, [LVBaseView baseMemberFunctions], 0);
-    luaL_openlib(L, NULL, [LVScrollView memberFunctions], 0);
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, [LVBaseView baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVScrollView memberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     
     const char* keys[] = { "addView", NULL};// 移除多余API
     lv_luaTableRemoveKeys(L, keys );

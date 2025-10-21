@@ -12,7 +12,7 @@
     "敛心": "jinjin.jj@alibaba-inc.com"
   },
   "platforms": {
-    "ios": "7.0"
+    "ios": "9.0"
   },
   "source": {
     "git": "https://github.com/alibaba/LuaViewSDK.git",
@@ -27,5 +27,6 @@
     "AVFoundation"
   ],
   "libraries": "z",
-  "requires_arc": true
+  "requires_arc": true,
+  "vendored_frameworks": "iOS/lua_ios.xcframework"
 }

@@ -76,8 +76,8 @@ static int onDraw (lua_State *L) {
     
     lv_createClassMetaTable(L,META_TABLE_CustomView);
     
-    luaL_openlib(L, NULL, [LVBaseView baseMemberFunctions], 0);
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, [LVBaseView baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     
     return 1;
 }

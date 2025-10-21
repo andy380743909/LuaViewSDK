@@ -1,1 +1,0 @@
-../../../../../SDK/LuaViewSDK/Classes/lvsdk/LVPanGesture.h

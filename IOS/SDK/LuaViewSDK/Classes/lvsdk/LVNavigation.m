@@ -150,7 +150,7 @@ static int setStatusBarStyle (lua_State *L) {
         {LUAVIEW_SYS_TABLE_KEY, setBackground},
         {NULL, NULL}
     };
-    luaL_openlib(L, "Navigation", fs, 0);
+    LV_LUA_OPENLIB(L, "Navigation", fs, 0);
     return 0;
 }
 

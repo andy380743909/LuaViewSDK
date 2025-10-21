@@ -125,7 +125,7 @@ static int toast (lua_State *L) {
     lv_createClassMetaTable(L, META_TABLE_UIAlertView);
     
     //luaL_openlib(L, NULL, [LVBaseView lvMemberFunctions], 0);
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     return 1;
 }
 

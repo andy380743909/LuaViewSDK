@@ -483,7 +483,7 @@ static int value(lua_State *L) {
     };
     
     lv_createClassMetaTable(L, META_TABLE_Animator);
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     
     return 1;
 }

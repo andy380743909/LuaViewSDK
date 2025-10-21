@@ -225,7 +225,7 @@ static int __tostring (lua_State *L) {
     
     lv_createClassMetaTable(L ,META_TABLE_Timer);
     
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     return 1;
 }
 

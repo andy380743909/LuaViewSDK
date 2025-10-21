@@ -207,7 +207,7 @@ static int sprite (lua_State *L) {
     // 创建Label类的方法列表
     lv_createClassMetaTable(L, META_TABLE_Bitmap);
     // 注册类方法列表
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     return 1;
 }
 

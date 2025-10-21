@@ -179,7 +179,7 @@ static int lvNewGesture (lua_State *L) {
     
     lv_createClassMetaTable(L, META_TABLE_Gesture);
     
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
     lua_settop(L, 0);
     {
         NSDictionary* v = nil;

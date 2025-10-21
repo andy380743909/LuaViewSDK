@@ -303,7 +303,7 @@ static int __add (lua_State *L) {
     };
     lv_createClassMetaTable(L, META_TABLE_AttributedString);
     
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     return 0;
 }
 

@@ -313,8 +313,8 @@ static int ellipsize (lua_State *L) {
     // 创建Label类的方法列表
     lv_createClassMetaTable(L, META_TABLE_UILabel);
     
-    luaL_openlib(L, NULL, [LVBaseView baseMemberFunctions], 0); // 继承基类View的所有方法列表
-    luaL_openlib(L, NULL, memberFunctions, 0); // 当前类Label特有的方法列表
+    LV_LUA_OPENLIB(L, NULL, [LVBaseView baseMemberFunctions], 0); // 继承基类View的所有方法列表
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0); // 当前类Label特有的方法列表
     
     const char* keys[] = { "addView", NULL};//列出需要移除的多余API
     lv_luaTableRemoveKeys(L, keys );// 移除冗余API 兼容安卓

@@ -9,7 +9,9 @@
 #import "LVCollectionViewCell.h"
 #import "LVHeads.h"
 #import "LView.h"
-#import "lapi.h"
+
+// Why import lapi.h here ? LVHeads.h not enough ???
+//#import "lapi.h"
 
 @interface LVCollectionViewCell ()
 @property (nonatomic,weak) LuaViewCore* lv_luaviewCore;

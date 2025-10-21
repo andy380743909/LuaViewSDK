@@ -29,8 +29,22 @@ Pod::Spec.new do |s|
 
   s.source_files  = "IOS/lua/lua/*.{h,m,c}"
   # s.exclude_files = "Classes/Exclude"
-  s.public_header_files = "IOS/lua/lua/{lua.h,lauxlib.h,lualib.h,ltable.h}"
-  s.private_header_files = "IOS/lua/lua/**/*.h"
+  s.public_header_files = [
+  "IOS/lua/lua/lua.h",
+  "IOS/lua/lua/lauxlib.h",
+  "IOS/lua/lua/lualib.h",
+  "IOS/lua/lua/lstate.h",
+  "IOS/lua/lua/lgc.h",
+  "IOS/lua/lua/lapi.h"
+]
+  s.private_header_files = Dir['IOS/lua/lua/**/*.h'] - [
+  "IOS/lua/lua/lua.h",
+  "IOS/lua/lua/lauxlib.h",
+  "IOS/lua/lua/lualib.h",
+  "IOS/lua/lua/lstate.h",
+  "IOS/lua/lua/lgc.h",
+  "IOS/lua/lua/lapi.h"
+]
   s.header_mappings_dir = "IOS/lua/lua"
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

@@ -1519,7 +1519,15 @@ static int releaseObject(lua_State *L) {
         if( [view isKindOfClass:[LuaViewCore class]] ){
             LuaViewCore* lView = (LuaViewCore*)view;
             lView.l = NULL;
+            
+#if LUA_VERSION_NUM < 502
             G(L)->ud = NULL;
+#else
+            void **ud = (void **)lua_getextraspace(L);
+            *ud = NULL;
+#endif
+            
+            
             [lView releaseLuaView];
         }
     }
@@ -1808,12 +1816,12 @@ static int lvNewView (lua_State *L) {
     
     lv_createClassMetaTable(L, META_TABLE_UIView);
     
-    luaL_openlib(L, NULL, [LVBaseView baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVBaseView baseMemberFunctions], 0);
     
     
     lv_createClassMetaTable(L, META_TABLE_LuaView);
-    luaL_openlib(L, NULL, [LVBaseView baseMemberFunctions], 0);
-    luaL_openlib(L, NULL, luaViewMemberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, [LVBaseView baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, luaViewMemberFunctions, 0);
     return 1;
 }
 

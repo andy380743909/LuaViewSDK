@@ -144,7 +144,7 @@ static int file_path (lua_State *L) {
         {"path", file_path},
         {NULL, NULL}
     };
-    luaL_openlib(L, "File", function, 0);
+    LV_LUA_OPENLIB(L, "File", function, 0);
     return 0;
 }
 

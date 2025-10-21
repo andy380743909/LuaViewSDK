@@ -238,7 +238,23 @@ static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
 -(void) registeLibs{
     if( !self.stateInited ) {
         self.stateInited = YES;
+        
+#if LUA_VERSION_NUM < 502
+        // Lua 5.1 and older (legacy)
         self.l =  lua_newstate(l_alloc, (__bridge void *)(self));
+#else
+        // upgrade to 5.4.4, replace the old LV_LUASTATE_VIEW
+        // #define LV_LUASTATE_VIEW(L) ( (__bridge LuaViewCore *)( G(L)->ud ) )
+        
+        lua_State *L = lua_newstate(l_alloc, NULL);
+        
+        // Store self in Lua extraspace (official API)
+        void **ud = (void **)lua_getextraspace(L);
+        *ud = (__bridge void *)self;
+        
+        self.l = L;
+#endif
+        
         luaL_openlibs(self.l);
         NSArray* arr = nil;
         arr = @[

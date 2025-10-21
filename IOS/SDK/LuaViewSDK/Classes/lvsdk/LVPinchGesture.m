@@ -72,14 +72,14 @@ static int scale (lua_State *L) {
     
     lv_createClassMetaTable(L ,META_TABLE_PinchGesture);
     
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
     
     {
         const struct luaL_Reg memberFunctions [] = {
             {"scale", scale},
             {NULL, NULL}
         };
-        luaL_openlib(L, NULL, memberFunctions, 0);
+        LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     }
     return 1;
 }

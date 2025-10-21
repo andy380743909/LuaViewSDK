@@ -66,8 +66,8 @@ static int lvNewPanGestureRecognizer (lua_State *L) {
     
     lv_createClassMetaTable(L, META_TABLE_PanGesture);
     
-    luaL_openlib(L, NULL, [LVGesture baseMemberFunctions], 0);
-    luaL_openlib(L, NULL, memberFunctions, 0);
+    LV_LUA_OPENLIB(L, NULL, [LVGesture baseMemberFunctions], 0);
+    LV_LUA_OPENLIB(L, NULL, memberFunctions, 0);
     return 1;
 }
 

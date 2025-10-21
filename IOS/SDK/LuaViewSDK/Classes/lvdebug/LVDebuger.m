@@ -128,7 +128,7 @@ void lv_printToServer(lua_State* L, const char* cs, int withTabChar){
 
 +(int) lvClassDefine:(lua_State *)L globalName:(NSString*) globalName{
 #ifdef DEBUG
-    luaL_register(L, LUA_DBLIBNAME, dblib);
+    LV_LUA_REGISTER(L, LUA_DBLIBNAME, dblib);
 #endif
     
     return 0;
