@@ -25,7 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     //摇一摇本地代码
     [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
@@ -59,9 +59,9 @@
     self.lv[@"viewController"] = self;
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleDefault;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return UIStatusBarStyleDefault;
+//}
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];

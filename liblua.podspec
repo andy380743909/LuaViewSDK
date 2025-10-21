@@ -29,7 +29,14 @@ Pod::Spec.new do |s|
 
   s.source_files  = "IOS/lua/lua/*.{h,m,c}"
   # s.exclude_files = "Classes/Exclude"
-
+  s.public_header_files = "IOS/lua/lua/{lua.h,lauxlib.h,lualib.h,ltable.h}"
+  s.private_header_files = "IOS/lua/lua/**/*.h"
+  s.header_mappings_dir = "IOS/lua/lua"
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
+  }
+  # s.static_framework = true
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #

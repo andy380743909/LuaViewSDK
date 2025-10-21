@@ -46,8 +46,8 @@ static BOOL __disableReloadKeyCommand = NO;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+//    self.automaticallyAdjustsScrollViewInsets = NO;
+//    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [self createLuaView];
 }
@@ -74,7 +74,7 @@ static BOOL __disableReloadKeyCommand = NO;
 
 -(void) viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
+//    [self.navigationController setNavigationBarHidden:NO animated:YES];
     
     [self.lv viewWillAppear];
 }

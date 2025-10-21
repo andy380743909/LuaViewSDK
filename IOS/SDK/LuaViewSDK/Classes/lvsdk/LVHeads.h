@@ -12,12 +12,20 @@
 
 #import <Foundation/Foundation.h>
 
-#import "lua.h"
-#import "lauxlib.h"
-#import "lualib.h"
-#import "lstate.h"
-#import "lgc.h"
-#import "lapi.h"
+//#import "lua.h"
+//#import "lauxlib.h"
+//#import "lualib.h"
+//#import "lstate.h"
+//#import "lgc.h"
+//#import "lapi.h"
+#import <liblua/lua.h>
+#import <liblua/lauxlib.h>
+#import <liblua/lualib.h>
+#import <liblua/lstate.h>
+#import <liblua/lgc.h>
+#import <liblua/lapi.h>
+
+//@import liblua;
 
 /**
  * the index of signed scripts' extionsion(@"lv") in LVScriptExts[]
