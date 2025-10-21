@@ -279,17 +279,20 @@ typedef void(^LVLoadFinished)(id errorInfo);
 #if LUA_VERSION_NUM < 502
     #define LV_LUA_OPENLIB(L, libname, l, n) luaL_openlib(L, libname, l, n)
 #else
-    #define LV_LUA_OPENLIB(L, libname, l, n) \
-        do { \
+#define LV_LUA_OPENLIB(L, libname, l, n) \
+do { \
+    if (libname) { \
+        lua_getglobal(L, libname); /* check if already exists */ \
+        if (lua_isnil(L, -1)) { \
+            lua_pop(L, 1); \
             lua_newtable(L); \
-            (void)(libname); /* ignore name, luaL_setfuncs does not need it */ \
-            luaL_setfuncs(L, l, n); \
-            if (libname) { \
-                lua_setglobal(L, libname); \
-            } else { \
-                lua_pop(L, 1); /* remove table if no global name */ \
-            } \
-        } while(0)
+        } \
+        luaL_setfuncs(L, l, n); \
+        lua_setglobal(L, libname); \
+    } else { \
+        luaL_setfuncs(L, l, n); /* just register to table on top */ \
+    } \
+} while(0)
 #endif
 
 
