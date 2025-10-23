@@ -165,7 +165,7 @@ demoArray = {
 	end,
 
 	function()
-		scrollView = ScrollView();
+		scrollView = HScrollView();
 		scrollView:backgroundColor(0xff00);
 		scrollView:frame(10,10,100,100);
 		scrollView:contentSize(600,300);
@@ -183,8 +183,8 @@ demoArray = {
 		window:backgroundColor(0,0.5);
 	 	pageControl = PagerIndicator();
 	 	pageControl:center(150,10);
-	 	pageControl:pageCount(10);
-	 	print(pageControl:pageCount() );
+	 	--pageControl:pageCount(10);
+	 	--print(pageControl:pageCount() );
 	 	scrollView:callback( function()
 	 		local  x,y = scrollView:offset();
 	 		pageControl:currentPage(x/100);

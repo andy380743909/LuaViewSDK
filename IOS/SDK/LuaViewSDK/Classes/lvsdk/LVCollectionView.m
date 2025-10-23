@@ -103,6 +103,10 @@ static int lvNewCollectionView(lua_State *L) {
     luaL_getmetatable(L, META_TABLE_UICollectionView );
     lua_setmetatable(L, -2);
     
+    // Strong reference to prevent GC
+    lua_pushvalue(L, -1);
+    userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    
     if ( lua_gettop(L)>=1 && lua_type(L, 1)==LUA_TTABLE ) {
         lua_pushvalue(L, 1);
         lv_udataRef(L, USERDATA_KEY_DELEGATE );

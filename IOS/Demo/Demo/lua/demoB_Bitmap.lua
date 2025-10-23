@@ -1,3 +1,4 @@
+print(PagerView)
 
 bitmap = Bitmap("http://gw.alicdn.com/tps/TB1qMx0KFXXXXXSXXXXXXXXXXXX-1065-765.png",
 	function ()

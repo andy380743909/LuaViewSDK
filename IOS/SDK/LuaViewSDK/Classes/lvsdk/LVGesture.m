@@ -37,6 +37,10 @@
             LVEvent* lvEvent = nil;
             lvEvent = [LVEvent createLuaEvent:l event:event gesture:self];
             lvEvent.eventType = eventType;
+            
+            // 2️⃣ Push LVEvent userdata onto Lua stack
+            lv_pushUserdata(l, lvEvent.lv_userData);
+            
             self.onTouchEventCallback(self,1);
             lvEvent.event = nil;
         } else {

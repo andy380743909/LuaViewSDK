@@ -1803,6 +1803,10 @@ static int lvNewView (lua_State *L) {
         luaL_getmetatable(L, META_TABLE_UIView );
         lua_setmetatable(L, -2);
         
+        // Strong reference to prevent GC
+        lua_pushvalue(L, -1);
+        userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
+        
         LuaViewCore* luaviewCore = LV_LUASTATE_VIEW(L);
         if( luaviewCore ){
             [luaviewCore containerAddSubview:view];

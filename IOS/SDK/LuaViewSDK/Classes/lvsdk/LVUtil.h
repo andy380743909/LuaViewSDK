@@ -183,6 +183,9 @@ NSData *LV_AES256DecryptDataWithKey(NSData *data, NSData* key);
  */
 +(void) defineGlobal:(NSString*)globalName value:(id) value L:(lua_State*)L;
 //------------------考虑性能问题, 一下接口试用C实现----------------------
+
+void lv_dumpStack(lua_State* L, const char* tag); // 调试用，dump栈
+
 // UData 关联脚本object
 void lv_udataRef(lua_State* L, int key);  // -2: userdata   -1: value
 void lv_udataUnref(lua_State* L, int key); // -1: userdata

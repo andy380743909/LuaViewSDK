@@ -53,6 +53,7 @@ static void releaseUserDataTimer(LVUserDataInfo* user){
     if( l && self.lv_userData ){
         lv_pushUserdata(l, self.lv_userData);
         lv_pushUDataRef(l, USERDATA_KEY_DELEGATE );
+        NSLog(@"Timer delegate type: %s", lua_typename(l, lua_type(l, -1)));
         lv_runFunction(l);
     }
 }
@@ -86,19 +87,29 @@ static int lvNewTimer (lua_State *L) {
     Class c = [LVUtil upvalueClass:L defaultClass:[LVTimer class]];
     
     LVTimer* timer = [[c alloc] init:L];
-    {
-        NEW_USERDATA(userData, Timer);
-        userData->object = CFBridgingRetain(timer);
-        timer.lv_userData = userData;
-        
-        luaL_getmetatable(L, META_TABLE_Timer );
-        lua_setmetatable(L, -2);
-    }
-    if( lua_type(L, 1) == LUA_TFUNCTION ) {
-        lua_pushvalue(L, 1);
+    
+    NEW_USERDATA(userData, Timer);
+    int userdataIndex = lua_gettop(L); // save userdata index
+    
+    userData->object = CFBridgingRetain(timer);
+    timer.lv_userData = userData;
+    
+    luaL_getmetatable(L, META_TABLE_Timer);
+    lua_setmetatable(L, -2);
+    
+    // Strong reference to prevent GC
+    lua_pushvalue(L, -1);
+    userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    
+    if (lua_type(L, 1) == LUA_TFUNCTION) {
+        // ✅ Push userdata first, then function
+        lua_pushvalue(L, userdataIndex); // userdata
+        lua_pushvalue(L, 1);             // Lua function
         lv_udataRef(L, USERDATA_KEY_DELEGATE);
+        NSLog(@"✅ Timer callback stored");
     }
-    return 1;
+    
+    return 1; // return userdata
 }
 
 static int setCallback (lua_State *L) {

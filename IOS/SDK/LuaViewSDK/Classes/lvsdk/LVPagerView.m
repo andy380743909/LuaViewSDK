@@ -248,8 +248,13 @@ static inline NSInteger unmapPageIdx(NSInteger pageIdx){
             // 创建cell初始化
             lua_settop(l, 0);
             lua_checkstack(l, 12);
-            [cell pushTableToStack];//arg1: cell
-            lua_pushnumber(l, mapPageIdx(pageIdx) );//arg2: section
+            
+//            [cell pushTableToStack];//arg1: cell
+//            lua_pushnumber(l, mapPageIdx(pageIdx) );//arg2: section
+            
+            // ✅ Fix
+            lua_pushnumber(l, mapPageIdx(pageIdx));  // arg1
+            [cell pushTableToStack];        // arg2 cell
             
             lv_pushUserdata(l, self.lv_userData);
             lv_pushUDataRef(l, USERDATA_KEY_DELEGATE);
@@ -259,8 +264,13 @@ static inline NSInteger unmapPageIdx(NSInteger pageIdx){
             // 参数 cell,section,row
             lua_settop(l, 0);
             lua_checkstack(l, 12);
-            [cell pushTableToStack];//arg1: cell
-            lua_pushnumber(l, mapPageIdx(pageIdx) );//arg2: section
+            
+//            [cell pushTableToStack];//arg1: cell
+//            lua_pushnumber(l, mapPageIdx(pageIdx) );//arg2: section
+            
+            // ✅ Fix
+            lua_pushnumber(l, mapPageIdx(pageIdx));  // arg1
+            [cell pushTableToStack];        // arg2
             
             lv_pushUserdata(l, self.lv_userData);
             lv_pushUDataRef(l, USERDATA_KEY_DELEGATE);
@@ -355,9 +365,15 @@ static int lvNewPagerView (lua_State *L) {
         
         NEW_USERDATA(userData, View);
         userData->object = CFBridgingRetain(pageView);
+        
         pageView.lv_userData = userData;
+        
         luaL_getmetatable(L, META_TABLE_UIPageView );
         lua_setmetatable(L, -2);
+        
+        // 3️⃣ Store permanent ref in Lua registry
+        lua_pushvalue(L, -1);                  // duplicate userdata
+        userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
         
         LuaViewCore* lview = LV_LUASTATE_VIEW(L);
         if( lview ){
@@ -372,6 +388,7 @@ static int lvNewPagerView (lua_State *L) {
         lua_settop(L, stackNum);
         
         lv_pushUserdata(L, pageView.lv_userData);
+        
         return 1;
     }
     return 0;

@@ -4,7 +4,7 @@ view = CustomView()
 view:frame(100, 100, 200, 200)
 view:backgroundColor(0x000000, 0.3)
 
-img:hidden(true)
+--img:hidden(true)
 
 view:onDraw(function(canvas)
     testCanvasAndroidAndIos(canvas)
@@ -92,7 +92,8 @@ function testCanvasAndroidAndIos(canvas)
     print(canvas:nativeObj())
 end
 
-
+img:frame(100, 220, 200, 200)
+img:scaleType(0)
 img:image("https://gju1.alicdn.com/bao/uploaded/i4/100000120700895002/TB2Qu0_fXXXXXb9XpXXXXXXXXXX_!!0-0-juitemmedia.jpg_560x560Q90.jpg", function()
     view:invalidate()
     print("image load finish")

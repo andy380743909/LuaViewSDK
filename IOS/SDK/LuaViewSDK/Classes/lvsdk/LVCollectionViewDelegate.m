@@ -62,27 +62,62 @@ static inline NSInteger mapSection(NSInteger section){
     LuaViewCore* lview = self.owner.lv_luaviewCore;
     lua_State* L = lview.l;
     UIView* newWindow = cell.contentView;
+    
+    // Save stack top before pushWindow
+    int top = lua_gettop(L);
+    
     [lview pushWindow:newWindow];
     if ( L ) {
         if( !cell.isInited ){
             cell.isInited = YES;
+            
+            // Initialize cell Lua table safely
+            // Save current stack top
+            int cellTop = lua_gettop(L);
+            
             [cell doInitWithLView:lview];
+            
+            // Stack after doInitWithLView may have pushed the table
+            // Determine table index explicitly
+            int cellTableIndex = lua_gettop(L);
             
             // 创建cell初始化
             lua_settop(L, 0);
             lua_checkstack(L, 12);
-            [cell pushTableToStack];//arg1: cell
-            lua_pushnumber(L, mapSection(section) );//arg2: section
-            lua_pushnumber(L, mapRow(row) );//arg3: row
+            
+            // Push arguments for Init (row, section, cell)
+            
+            lv_dumpStack(L, "cell before");
+            
+            [cell pushTableToStack];
+            
+            lv_dumpStack(L, "cell after");
+            
+            lua_pushnumber(L, mapSection(section)); // arg2
+            lua_pushnumber(L, mapRow(row));      // arg1
+            
+//            lv_dumpStack(L, "cell after section and row");
             
             lv_pushUserdata(L, self.owner.lv_userData);
             lv_pushUDataRef(L, USERDATA_KEY_DELEGATE);
+            
+            lv_dumpStack(L, "cell after userdata and delegate");
+            
             [LVUtil call:L key1:"Cell" key2:identifier.UTF8String key3:"Init" nargs:3 nrets:0 retType:LUA_TNONE];
+            
+            
+            // Restore stack
+            lua_settop(L, cellTop);
         }
         {   // 通知布局调整
+            
+            // Layout call
+            int layoutTop = lua_gettop(L);
+            
             // 参数 cell,section,row
             lua_settop(L, 0);
             lua_checkstack(L, 12);
+            
             [cell pushTableToStack];//arg1: cell
             lua_pushnumber(L, mapSection(section) );//arg2: section
             lua_pushnumber(L, mapRow(row) );//arg3: row
@@ -90,6 +125,9 @@ static inline NSInteger mapSection(NSInteger section){
             lv_pushUserdata(L, self.owner.lv_userData);
             lv_pushUDataRef(L, USERDATA_KEY_DELEGATE);
             [LVUtil call:L key1:"Cell" key2:identifier.UTF8String key3:"Layout" nargs:3 nrets:0 retType:LUA_TNONE];
+            
+            // Restore stack
+            lua_settop(L, top);
         }
     }
     [lview popWindow:newWindow];

@@ -1,12 +1,12 @@
 --工具包引入
-require "lv_kit"
+--require "lv_kit"
 
 local scrW, scrH= System:screenSize()
 
 pageView = PagerView{
     PageCount = 3,
     Pages = {
-        Init = function(page, pos)
+        Init = function(pos, page)
             page.button = Button()
         end,
         Layout = function(page, pos)

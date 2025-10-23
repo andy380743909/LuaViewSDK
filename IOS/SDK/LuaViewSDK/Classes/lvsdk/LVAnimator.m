@@ -42,12 +42,17 @@ static int lvNewAnimator(lua_State *L) {
 
     NEW_USERDATA(userData, Animator);
     userData->object = CFBridgingRetain(animator);
+    userData->luaRef   = LUA_NOREF;   // init safe default
     
     animator.lv_userData = userData;
     animator.lv_luaviewCore =  LV_LUASTATE_VIEW(L);
     
     luaL_getmetatable(L, META_TABLE_Animator);
     lua_setmetatable(L, -2);
+    
+    // 3️⃣ Store permanent ref in Lua registry
+    lua_pushvalue(L, -1);                  // duplicate userdata
+    userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
     
     return 1;
 }
@@ -56,7 +61,12 @@ static int __gc(lua_State *L) {
     LVUserDataInfo *data = (LVUserDataInfo *)lua_touserdata(L, 1);
     if (LVIsType(data, Animator) && data->object) {
         LVAnimator *animator = (__bridge LVAnimator *)data->object;
-
+        
+        if (data->luaRef != LUA_NOREF) {
+            luaL_unref(L, LUA_REGISTRYINDEX, data->luaRef);
+            data->luaRef = LUA_NOREF;
+        }
+        
         CFBridgingRelease((__bridge CFTypeRef)(animator));
         data->object = nil;
         

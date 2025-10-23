@@ -33,7 +33,10 @@ collectionView = RefreshCollectionView {
 			Size = function(section, row)
 				return (w-10)/2 ,200;
 			end,
-			Init = function(cell)
+			Init = function(cell, section, row)
+   print(cell)
+   print(section)
+   print(row)
 				local cellWidth ,cellHeight = cell.window:size();
 				cellHeight = cellHeight / 2;
 				cell.icon = Image();
@@ -46,6 +49,11 @@ collectionView = RefreshCollectionView {
 				print("构造Cell--2");
 			end,
 			Layout = function(cell , section, row)
+   
+      print(cell)
+   print(section)
+   print(row)
+   
 				cell.icon:image(imageUrl1, function()
 						local x,y,w,h = cell.icon:frame();
 						print("dongxicheng----",x,y,w,h);

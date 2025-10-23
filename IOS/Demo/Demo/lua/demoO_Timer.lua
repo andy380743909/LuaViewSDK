@@ -22,21 +22,23 @@ timer1 = Timer(function()
 end);
 timer1 = timer1:start(1.0, false);
 
+
+
 --2
 index2 = 1;
 timer2 = Timer()
 timer2:callback(
-	function() 
-		myprint("Timer2 Run",index2) 
-		index2 = index2 + 1;
-	end
-	)
+    function()
+        myprint("Timer2 Run",index2)
+        index2 = index2 + 1;
+    end
+    )
 timer2:start(2, true)
 
 --3
 timer3 = Timer(function()
     timer2:cancel()
-	myprint("Timer3 Run") 
+    myprint("Timer3 Run")
 end)
 timer3:start(10)
 
@@ -48,10 +50,9 @@ timer4:delay(5);
 timer4:interval(1);
 timer4:callback(
     function()
-    	myprint("Timer4 Run")
-    	timer4 = nil;
-    	System:gc();
+        myprint("Timer4 Run")
+        timer4 = nil;
+        System:gc();
     end
 )
 timer4:start()
-

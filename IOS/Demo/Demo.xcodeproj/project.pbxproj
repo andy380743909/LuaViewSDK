@@ -217,6 +217,7 @@
 		9190C01C1EA8D0FF0051E919 /* demoB_Bitmap.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demoB_Bitmap.lua; path = lua/demoB_Bitmap.lua; sourceTree = "<group>"; };
 		A1FA7C372EA7C62400B491FD /* lua_ios.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = lua_ios.xcframework; path = ../../../../Workspace/lua_ios/.build/lua_ios.xcframework; sourceTree = "<group>"; };
 		A1FA7C3D2EA7D76200B491FD /* ios_system.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ios_system.xcframework; path = ../../../../Workspace/ios_system/.build/ios_system.xcframework; sourceTree = "<group>"; };
+		A1FA7C402EA7F59600B491FD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +247,7 @@
 		3CC2F8111C706B1D00D1E0B7 = {
 			isa = PBXGroup;
 			children = (
+				A1FA7C402EA7F59600B491FD /* README.md */,
 				3CC2F81C1C706B1D00D1E0B7 /* Demo */,
 				3CC2F81B1C706B1D00D1E0B7 /* Products */,
 				E828AAF6D9BD6A045BEE78AA /* Frameworks */,

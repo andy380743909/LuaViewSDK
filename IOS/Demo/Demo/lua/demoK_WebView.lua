@@ -1,5 +1,5 @@
 --工具包引入
-require "lv_kit"
+--require "lv_kit"
 
 local scrW, scrH= System:screenSize()
 

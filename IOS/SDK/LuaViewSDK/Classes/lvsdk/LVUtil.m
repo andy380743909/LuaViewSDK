@@ -75,6 +75,14 @@
             return nil;
         }
         if( type == LUA_TFUNCTION ){//function
+            // TODO: this trick approve the stack layout is different with lua 5.1.4 verison
+            // our new version lv_pushUserdata(l, self.lv_userData); lv_pushUDataRef(l, USERDATA_KEY_DELEGATE);
+            // have pushed one more item into the stack, so the lua_insert(l, -nargs-1); in lv_runFunctionWithArgs is wrong.
+            // if we nargs += 1; then the funcion call can work correctly.
+            // we must refactor these code carefully!!!
+            if (key1 == "Cell") {
+                nargs += 1;
+            }
             return lv_runFunctionWithArgs(l, nargs, nret);
         }
     }
@@ -87,9 +95,11 @@ NSString* lv_runFunction(lua_State* l){
 
 NSString* lv_runFunctionWithArgs(lua_State* l, int nargs, int nret){
     if( l && lua_type(l, -1) == LUA_TFUNCTION ) {
+        lv_dumpStack(l, "before lua_insert");
         if( nargs>0 ){
             lua_insert(l, -nargs-1);
         }
+        lv_dumpStack(l, "after lua_insert");
         int errorCode = lua_pcall( l, nargs, nret, 0);
         if ( errorCode != 0 ) {
             const char* s = lua_tostring(l, -1);
@@ -102,6 +112,11 @@ NSString* lv_runFunctionWithArgs(lua_State* l, int nargs, int nret){
         }
         return nil;
     }
+    // ⚠️ Function is missing — log and return error
+    LVError(@"function is nil error");
+#ifdef DEBUG
+    lv_printToServer(l, "[LuaView][error]   function is nil error", 0);
+#endif
     return @"function is nil error";
 }
 
@@ -121,39 +136,35 @@ NSString* lv_runFunctionWithArgs(lua_State* l, int nargs, int nret){
 //}
 
 /*
- * Push userData to Lua stack
- *
- * L    - Lua state
- * p    - pointer to C object (can be NULL)
- * size - size of the data to store (optional, 0 if just storing pointer)
+ * Pushes a Lua userdata or lightuserdata for a given pointer.
+ * - For Lua 5.1: uses internal API (legacy mode)
+ * - For Lua 5.2+: uses safe public API (lightuserdata or registry reference)
  */
-void lv_pushUserdata(lua_State* L, void* p)
-//void lv_pushUserdata(lua_State* L, void* p, size_t size)
-{
-    size_t size = 0;
-    if (p) {
-        // Allocate Lua userdata
-        void* udata = lua_newuserdata(L, size > 0 ? size : sizeof(void*));
-        
-        if (size > 0) {
-            // Copy the contents if size > 0
-            memcpy(udata, p, size);
-        } else {
-            // Just store the pointer
-            *((void**)udata) = p;
-        }
+void lv_pushUserdata(lua_State* L, void* p) {
+    if (!L) return;
+    if (p == NULL) {
+        lua_pushnil(L);
+        return;
+    }
 
-        // Optionally, set a metatable for this userdata
-        luaL_getmetatable(L, "LVUserdataMeta");
-        if (!lua_isnil(L, -1)) {
-            lua_setmetatable(L, -2);
-        } else {
-            lua_pop(L, 1); // pop nil
-        }
-
+#if LUA_VERSION_NUM < 502
+    // Original behavior (Lua 5.1)
+    Udata* u = (Udata*)p;
+    u -= 1;  // back to Udata header
+    lua_lock(L);
+    luaC_checkGC(L);
+    setuvalue(L, L->top, u);
+    api_incr_top(L);
+    lua_unlock(L);
+#else
+    // Lua 5.2+ safe replacement
+    LVUserDataInfo *data = (LVUserDataInfo *)p;
+    if (data && data->luaRef != LUA_NOREF) {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, data->luaRef);
     } else {
         lua_pushnil(L);
     }
+#endif
 }
 
 id lv_luaTableToDictionary(lua_State* L ,int index){
@@ -282,17 +293,66 @@ NSArray* lv_luaTableToArray(lua_State* L,int stackID)
     return nil;
 }
 
+void lv_dumpStack(lua_State* L, const char* tag) {
+    int top = lua_gettop(L);
+    NSLog(@"--- Lua Stack Dump (%s) ---", tag);
+    for (int i = 1; i <= top; i++) {
+        int type = lua_type(L, i);
+        const char* typeName = lua_typename(L, type);
+        switch(type){
+            case LUA_TSTRING:
+                NSLog(@"%d: %s (string) = '%s'", i, typeName, lua_tostring(L, i));
+                break;
+            case LUA_TNUMBER:
+                NSLog(@"%d: %s = %f", i, typeName, lua_tonumber(L, i));
+                break;
+            case LUA_TBOOLEAN:
+                NSLog(@"%d: %s = %s", i, typeName, lua_toboolean(L, i) ? "true":"false");
+                break;
+            case LUA_TTABLE:
+                NSLog(@"%d: %s (table) = %p", i, typeName, lua_topointer(L, i));
+                break;
+            case LUA_TUSERDATA:
+                NSLog(@"%d: %s (userdata) = %p", i, typeName, lua_touserdata(L, i));
+                break;
+            case LUA_TLIGHTUSERDATA:
+                NSLog(@"%d: %s (lightuserdata) = %p", i, typeName, lua_touserdata(L, i));
+                break;
+            case LUA_TNIL:
+                NSLog(@"%d: %s = nil", i, typeName);
+                break;
+            default:
+                NSLog(@"%d: %s = ???", i, typeName);
+        }
+    }
+    NSLog(@"--- end stack ---");
+}
+
 #pragma -mark registry
+
+//+ (void) registryValue:(lua_State*)L key:(id) key stack:(int) stackID{
+//    if( L ) {
+//        lua_checkstack(L, 4);
+//        lua_pushvalue(L, stackID );    // value
+//        lua_pushlightuserdata(L, (__bridge void *)(key) );   // key
+//        lua_insert(L, -2);                // key <==> value 互换
+//        lua_settable(L, LUA_REGISTRYINDEX);// registry[&Key] = fucntion
+//    }
+//}
 
 + (void) registryValue:(lua_State*)L key:(id) key stack:(int) stackID{
     if( L ) {
-        lua_checkstack(L, 4);
-        lua_pushvalue(L, stackID );    // value
-        lua_pushlightuserdata(L, (__bridge void *)(key) );   // key
-        lua_insert(L, -2);                // key <==> value 互换
-        lua_settable(L, LUA_REGISTRYINDEX);// registry[&Key] = fucntion
+        // Push key and value
+        lua_pushlightuserdata(L, (__bridge void *)(key)); // key
+        lua_pushvalue(L, stackID);                        // value
+        
+        // registry[key] = value
+        lua_settable(L, LUA_REGISTRYINDEX);
     }
 }
+
+
+
 
 + (void) unregistry:(lua_State*) L key:(id) key{
     if( L ) {
@@ -716,24 +776,53 @@ NSString* lv_paramString(lua_State* L, int idx ){
     return yes;
 }
 
+//void lv_pushUDataRef(lua_State* L, int key) {
+//    // -1:userdata
+//    if( lua_gettop(L)>=1 && lua_type(L, -1)==LUA_TUSERDATA ) {
+//        lua_checkstack(L, 2);
+//        
+//        if( lv_getUDataLuatable(L, -1) ) {
+//            lua_remove(L, -2);
+//        }
+//        if( lua_type(L, -1)==LUA_TTABLE ) {
+//            lua_pushnumber(L, key);
+//            lua_gettable(L, -2);
+//            lua_remove(L, -2);
+//        } else {
+//            LVError( @"lv_pushUDataRef.1" );
+//        }
+//    } else {
+//        LVError( @"lv_pushUDataRef.2" );
+//    }
+//}
+
 void lv_pushUDataRef(lua_State* L, int key) {
-    // -1:userdata
-    if( lua_gettop(L)>=1 && lua_type(L, -1)==LUA_TUSERDATA ) {
-        lua_checkstack(L, 2);
-        
-        if( lv_getUDataLuatable(L, -1) ) {
-            lua_remove(L, -2);
-        }
-        if( lua_type(L, -1)==LUA_TTABLE ) {
-            lua_pushnumber(L, key);
-            lua_gettable(L, -2);
-            lua_remove(L, -2);
-        } else {
-            LVError( @"lv_pushUDataRef.1" );
-        }
-    } else {
-        LVError( @"lv_pushUDataRef.2" );
+    if (lua_gettop(L) < 1) return; // nothing on stack
+    if (lua_type(L, -1) != LUA_TUSERDATA) {
+        // stack top is not userdata, just push nil
+        lua_pushnil(L);
+        return;
     }
+
+    // Try to get the userdata table
+    if (!lv_getUDataLuatable(L, -1)) {
+        // userdata has no table, replace top with nil
+        lua_pop(L, 1);
+        lua_pushnil(L);
+        return;
+    }
+
+    // Now top is table
+    if (lua_type(L, -1) != LUA_TTABLE) {
+        lua_pop(L, 1);
+        lua_pushnil(L);
+        return;
+    }
+
+    // Push key and get value
+    lua_pushinteger(L, key);
+    lua_gettable(L, -2);
+    lua_remove(L, -2); // remove userdata table, leave value
 }
 
 void lv_udataRef(lua_State* L, int key ){

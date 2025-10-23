@@ -73,6 +73,10 @@ static int lvNewButton (lua_State *L) {
             
             luaL_getmetatable(L, META_TABLE_UIButton );
             lua_setmetatable(L, -2);
+            
+            // 🔹 Prevent GC by keeping strong reference in registry
+            lua_pushvalue(L, -1);
+            userData->luaRef = luaL_ref(L, LUA_REGISTRYINDEX);
         }
         LuaViewCore* father = LV_LUASTATE_VIEW(L);
         if( father ){

@@ -110,6 +110,7 @@ typedef struct _LVUserDataInfo {
     const char* type;// 用户类型
     const void* object;// 真实的用户对象
     int isWindow;
+    int luaRef;            // NEW: registry reference (LUA_NOREF if none)
 } LVUserDataInfo;
 
 //--------------------------------------------------------------------------------

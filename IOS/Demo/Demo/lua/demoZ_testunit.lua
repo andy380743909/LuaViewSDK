@@ -283,7 +283,7 @@ demoArray = {
 	end,
 
 	function()
-		scrollView = ScrollView();
+		scrollView = HScrollView();
 		scrollView:backgroundColor(0xff00);
 		scrollView:frame(10,10,100,100);
 		scrollView:contentSize(600,300);

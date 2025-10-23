@@ -1,12 +1,12 @@
 -- 简单动画
 startBtn = Button();
-startBtn:frame(10, 10, 60, 120)
+startBtn:frame(10, 110, 60, 120)
 
 resumeBtn = Button()
-resumeBtn:frame(80, 10, 60, 120)
+resumeBtn:frame(80, 110, 60, 120)
 
 stateLabel = Label()
-stateLabel:frame(150, 10, 60, 120)
+stateLabel:frame(150, 110, 60, 120)
 
 local function isRunning()
     return translation:isRunning()
